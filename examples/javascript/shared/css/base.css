@@ -1,0 +1,191 @@
+body {
+  background: #fff;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0;
+  padding: 30px;
+}
+
+a {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;
+  font-size: 12px;
+  margin: 0 2px;
+  padding: 0px 5px;
+}
+
+h1, h2, h3, h4 {
+  font-weight: bold;
+  margin: 0 0 15px;
+  padding: 0;
+}
+
+h1 {
+  border-bottom: 1px solid #ddd;
+  font-size: 2.5em;
+  font-weight: bold;
+  margin: 0 0 15px;
+  padding: 0;
+}
+
+h2 {
+  border-bottom: 1px solid #eee;
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.5em;
+}
+
+h4 {
+  font-size: 1.2em;
+}
+
+p, ul {
+  margin: 10px 0;
+}
+
+ul {
+  padding-left: 30px;
+}
+
+input[type='button'] {
+    font-weight: 200;
+
+    line-height: 12px;
+
+    font-size: 0.9em;
+    letter-spacing: 0.15em;
+
+    padding: .785714286em 1.071428571em .55em; /* 11 15 shame / 14 */
+
+    color: black;
+    text-transform: uppercase;
+
+    border: none;
+    border-radius: 0;
+}
+
+input[type='text'] {
+
+    width: 20em; /* 65 / 14 */
+    height: 2.071428571em; /* 29 / 14 */
+
+    color: black;
+    border: none;
+    background-color: rgb(235, 235, 235);
+
+    text-align: center;
+
+    font-weight: 200;
+    font-size: 0.88em;
+    letter-spacing: 0.122em;
+}
+
+input[type='number'] {
+
+    width: 10em; /* 65 / 14 */
+    height: 2.071428571em; /* 29 / 14 */
+
+    color: black;
+    border: none;
+    background-color: rgb(235, 235, 235);
+
+    text-align: left;
+
+    font-weight: 200;
+    font-size: 0.88em;
+    letter-spacing: 0.122em;
+    padding: .55em;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
+}
+
+
+/* measurements*/
+.measurementsDemo .measurements-left {
+    position: relative;
+    z-index: 1;
+
+    left:30px;
+    top: 20px;
+    width: 50%;
+}
+
+.measurementsDemo .measurements-right {
+    position: absolute;
+    top: 110px;
+    left: 40%;
+}
+
+.auth-setup {
+    position: relative;
+    left: 30px;
+}
+
+.measurements-output table {
+    border:1px solid #000000;
+    border-width:1px 1px 1px 1px;
+    text-align:left;
+    padding:7px;
+    font-size:14px;
+    background-color: rgb(235, 235, 235);
+    border-collapse: collapse;
+}
+.measurements-output table th { 
+    width: 128px;
+}
+.measurements-output table tr { 
+    border: solid thin; 
+}
+
+.measurements-output table td {
+    border-top: thin solid; 
+    border-bottom: thin solid;
+}
+
+.measurements-output table td:first-child {
+     border-left: thin solid;
+}
+
+.measurements-output table td:last-child {
+     border-right: thin solid;
+}
+
+.measurement-desc {
+    position: relative;
+
+    left:30px;
+    top: 30px;
+}
+
+.measurements-errors {
+    position: relative;
+
+    left:30px;
+    top: 20px;
+}
+
+.measurements-errors span {
+    color: red;
+}
