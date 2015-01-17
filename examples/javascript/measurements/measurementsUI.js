@@ -110,33 +110,25 @@ var MeasurementInputForm = React.createClass({
         }
         this.setState({inputMeasurements: inputMeasurements});
       }
-
-      this.requestMeasurementsDebounced();
     },
-    requestMeasurementsDebounced: _.debounce(function () {
-      this.props.onMeasurementsRequest(this.constructPayload());
-    }, 400),
-    handleGenderChange: function (event) {
-      this.handleUserInput();
-    },
-    handleUnitSystemChange: function (event){
-      this.handleUserInput();
-    },
-    handleClick: function (event) {
+    handleGetMeshClick: function (event) {
       this.props.onMeshRequest(this.constructPayload());
+    },
+    handleGetMeasurementsClick: function (event) {
+      this.props.onMeasurementsRequest(this.constructPayload());
     },
     render: function () {
       return (
         <div className='measurements-input'>
             <h3>Enter Your Measurements</h3>
             <div>
-              <input type="radio" name="gender" value="male" ref='radioMale' defaultChecked={true} onChange={this.handleGenderChange}/>male &nbsp;
-              <input type="radio" name="gender" value="female" onChange={this.handleGenderChange}/>female
+              <input type="radio" name="gender" value="male" ref='radioMale' defaultChecked={true}/>male &nbsp;
+              <input type="radio" name="gender" value="female"/>female
             </div>
 
              <div>
-              <input type="radio" name="unitSystem" value="unitedStates" ref='radioUnitsUS' defaultChecked={true} onChange={this.handleUnitSystemChange}/>US (in, lb) &nbsp;
-              <input type="radio" name="unitSystem" value="metric" onChange={this.handleUnitSystemChange}/>metric (cm, kg)
+              <input type="radio" name="unitSystem" value="unitedStates" ref='radioUnitsUS' defaultChecked={true}/>US (in, lb) &nbsp;
+              <input type="radio" name="unitSystem" value="metric"/>metric (cm, kg)
             </div>
 
                 {
@@ -154,10 +146,14 @@ var MeasurementInputForm = React.createClass({
               <input
                 type="text"
                 placeholder="size"
-                ref="baseBodySize"
-                onChange={this.handleUserInput}/>
+                ref="baseBodySize"/>
             </p>
-            <input type="button" value="Download Mesh" onClick={this.handleClick} />
+            <p>
+              <input type="button" value="Get Measurements" onClick={this.handleGetMeasurementsClick} />
+            </p>
+            <p>
+              <input type="button" value="Download Mesh" onClick={this.handleGetMeshClick} />
+            </p>
         </div>
       );
     }
