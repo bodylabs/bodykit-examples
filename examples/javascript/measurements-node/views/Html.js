@@ -59,6 +59,8 @@ module.exports = React.createClass({
         <body>
           <div id="content" dangerouslySetInnerHTML={{__html: contentHtml}}/>
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+          <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r65/three.min.js"></script>
+          <script src="https://bodylabs-widget-prerelease.s3.amazonaws.com/body-from-measurements/9e0f481/body-from-measurements-widget.js"></script>
           <script src="/main.js"></script>
           <script dangerouslySetInnerHTML={{__html: initScript}} />
 

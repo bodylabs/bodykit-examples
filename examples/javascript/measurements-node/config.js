@@ -4,6 +4,6 @@ module.exports = {
     bodyKitApiBase: 'https://api.bodylabs.com',
     devAccessKey: '',
     devSecret:'',
-    defaultPolicy: {fast: ['measurements', 'mesh']},
+    defaultPolicy: {instant: ['measurements', 'mesh']},
     defaultPolicyExpireInSeconds: 120,
 };

@@ -76,6 +76,9 @@ input[type='button'] {
 
     border: none;
     border-radius: 0;
+
+    margin: 0 0.2em;
+    width: 15em;
 }
 
 input[type='text'] {
@@ -97,7 +100,7 @@ input[type='text'] {
 input[type='number'] {
 
     width: 10em; /* 65 / 14 */
-    height: 2.071428571em; /* 29 / 14 */
+    height: 2.571428571em; /* 29 / 14 */
 
     color: black;
     border: none;
@@ -125,22 +128,53 @@ input[type=number] {
 /* measurements*/
 .measurementsDemo .measurements-left {
     position: relative;
-    z-index: 1;
 
     left:30px;
     top: 20px;
     width: 50%;
 }
 
-.measurementsDemo .measurements-right {
+.measurementsDemo .measurements-middle {
     position: absolute;
     top: 110px;
     left: 40%;
 }
 
+.measurementsDemo .measurements-right {
+    position: absolute;
+    top: 110px;
+    left: 70%;
+}
+
 .auth-setup {
     position: relative;
     left: 30px;
+}
+
+.measurements-input {
+
+    box_shadow(2);
+    width: 342px;
+    padding: 10px;
+
+    text-align: center;
+
+    background-color: rgba(197, 197, 197, 0.9);
+}
+
+.measurements-input input[type='button'] {
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+}
+
+.measurements-input input[type='text'] {
+    width: 10em;
+    height: 2.5em;
+    padding: 0.55em;
+}
+
+.action_buttons_container {
+  text-align: center;
 }
 
 .measurements-output table {
@@ -188,4 +222,26 @@ input[type=number] {
 
 .measurements-errors span {
     color: red;
+}
+
+#bodylabsWidget {
+    width: 800px;
+    height: 600px;
+
+    border: 1px solid black;
+}
+
+.widget-container {
+    position: absolute;
+    left: 27em;
+    top: -4em;
+    width: 800px;
+    height: 600px;
+    z-index: 10;
+    background-color: rgba(235, 235, 235, 1.0);
+
+}
+
+.hidden {
+    display: none;
 }

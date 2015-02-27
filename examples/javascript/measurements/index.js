@@ -36,7 +36,7 @@ var AuthSetupForm = React.createClass({
     getInitialState: function () {
         return {
           setButtonClicked:false,
-          shouldCleanAuthResult: false
+          shouldCleanAuthResult: false,
         };
     },
     handleClick: function () {
@@ -81,35 +81,70 @@ var MeasurementsApp = React.createClass({
         }
     },
     getMesh: function (payload) {
+        var component = this;
         $.ajax({
             type: 'POST',
-            url: this.props.baseUrl + '/lite/mesh',
+            url: component.props.baseUrl + '/instant/mesh',
             data: JSON.stringify(payload),
             dataType: 'json',
-            headers: {"Authorization": "SecretPair accesskey="+ this.state.auth.accessKey +",secret=" + this.state.auth.secret},
-            error: this.errorHandler,
+            headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
+            error: component.errorHandler,
             success: function (data) {
-                this.setState({authResult: 'Success'});
-                this.setState({errors: {}});
-                this.downloadStringAsFile('mesh.obj', data);
-            }.bind(this)
+                component.setState({authResult: 'Success'});
+                component.setState({errors: {}});
+                component.downloadStringAsFile('mesh.obj', data);
+            }
         });
     },
 
-    getPredictedMeasurements: function (payload) {
+    getPredictedMeasurements: function(payload) {
+      var component = this;
+      this._getMeasurements(payload, function (data) {
+          component.setState({predictedMeasurements: data.output.measurements});
+          component.setState({authResult: 'Success'});
+          component.setState({errors: {}});
+      });
+    },
+
+    _getMeasurements: function (payload, successCallback) {
+
+        var component = this;
         $.ajax({
             type: 'POST',
-            url: this.props.baseUrl + '/lite/measurements',
+            url: component.props.baseUrl + '/instant/measurements',
             data: JSON.stringify(payload),
             dataType: 'json',
-            headers: {"Authorization": "SecretPair accesskey="+ this.state.auth.accessKey +",secret=" + this.state.auth.secret},
-            error: this.errorHandler,
-            success: function (data) {
-                this.setState({predictedMeasurements: data.output.measurements});
-                this.setState({authResult: 'Success'});
-                this.setState({errors: {}});
-            }.bind(this)
+            headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
+            error: component.errorHandler,
+            success: successCallback
         });
+    },
+
+    //Get heatmap and get heatmap measurements alone the way
+    getHeatmap: function (payload) {
+        var component = this;
+        $.ajax({
+            type: 'POST',
+            url: component.props.baseUrl + '/instant/heatmap',
+            data: JSON.stringify(payload),
+            dataType: 'json',
+            headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
+            error: component.errorHandler,
+            success: function (data) {
+                component.setState({authResult: 'Success'});
+                component.setState({errors: {}});
+                component.downloadStringAsFile('heatmap.obj', data);
+            }
+        });
+
+        //the second body is the body to be compared.
+        var bodyFromWidget = payload.bodies[1];
+        this._getMeasurements(bodyFromWidget, function (data) {
+          component.setState({heatmapMeasurements: data.output.measurements});
+          component.setState({authResult: 'Success'});
+          component.setState({errors: {}});
+        });
+
     },
     setUpAuth: function (accessKey, secret) {
         this.setState({
@@ -130,27 +165,39 @@ var MeasurementsApp = React.createClass({
     getInitialState: function () {
         return {
           predictedMeasurements: {},
+          heatmapMeasurements: {},
           auth: {},
           authResult: 'unknown',
           errors: {},
         };
     },
     render: function () {
+
+        var widgetOptions = this.props.widgetOptions;
+        widgetOptions.accessKey = this.state.auth.accessKey;
+
         return (
             <div className='measurementsDemo'>
 
               <AuthSetupForm onAuthFormSubmit={this.setUpAuth} authResult={this.state.authResult}/>
 
               <section className='measurements-left'>
-                  <MeasurementInputForm presetMeasurements={this.props.presetMeasurements}
+                  <MeasurementInputForm  widgetOptions={widgetOptions}
+                                    presetMeasurements={this.props.presetMeasurements}
                                     onMeasurementsRequest={this.getPredictedMeasurements}
-                                    onMeshRequest={this.getMesh}/>
+                                    onMeshRequest={this.getMesh}
+                                    handleHeatMapsRequest={this.getHeatmap}/>
               
               </section>
 
-              <section className='measurements-right'>
+              <section className='measurements-middle'>
                     <h3>Generated Measurements: </h3>
                     <MeasurementsTable measurements={this.state.predictedMeasurements}/>
+              </section>
+
+               <section className='measurements-right'>
+                    <h3>Heatmap Measurements: </h3>
+                    <MeasurementsTable measurements={this.state.heatmapMeasurements}/>
               </section>
 
               <section className='measurements-errors'>
@@ -169,15 +216,22 @@ setInterval(function () {
     {id: 'height'},
     {id: 'bust_girth'},
     {id: 'waist_girth'},
-    {id: 'high_hip_girth'},
-    {id: 'full_sleeve_length'},
+    {id: 'low_hip_girth'},
+    {id: 'shirt_sleeve_length'},
     {id: 'inseam'},
   ];
+
+  var bodykitWidgetOptions = {
+      genderOptions: ['female', 'male'],
+      defaultGender: 'male',
+  };
 
   var baseUrl = "https://api.bodylabs.com";
 
   React.render(
-    <MeasurementsApp presetMeasurements={standardMeasurements} baseUrl={baseUrl}/>,
+    <MeasurementsApp presetMeasurements={standardMeasurements} 
+                     baseUrl={baseUrl}
+                     widgetOptions={bodykitWidgetOptions}/>,
     document.getElementById('container')
   );
 }, 50);

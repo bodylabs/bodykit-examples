@@ -1,7 +1,7 @@
 BodyKit Examples
 =================
 
-Several BodyKit API examples
+Several BodyKit API examples (We are in beta!)
 
 Build
 ----------

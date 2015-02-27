@@ -1,5 +1,5 @@
 /** @jsx React.DOM */
-var React = require('react'),
+var React = require('react/addons'),
     _ = require('underscore');
 
 var MeasurementsRow = React.createClass({
@@ -76,11 +76,36 @@ var MeasurementsErrorsPrompt = React.createClass({
 });
 
 var MeasurementInputForm = React.createClass({
+
+    propTypes: {
+      widgetOptions: React.PropTypes.object,
+      handleHeatMapsRequest: React.PropTypes.func,
+    },
+
+    getDefaultProps: function () {
+
+        var component = this;
+
+        //Provide a set of default options for simplicity
+        var attrs = {
+            genderOptions: ['female', 'male'],
+            defaultGender: 'male',
+        };
+
+        return {
+          widgetOptions: attrs,
+        };
+    },
+
     getInitialState: function () {
       return {
           inputMeasurements: {},
+          heatMapInputMeasurements: {},
+          showWidget: false,
+          widgetInitialized: false,
       };
     },
+
     constructPayload: function () {
       var size = this.refs.baseBodySize.getDOMNode().value;
 
@@ -97,27 +122,123 @@ var MeasurementInputForm = React.createClass({
       }
       return payload;
     },
+
+    constructHeatMapPayload: function (bodyOne, bodyTwo) {
+
+      return { 
+        bodies: [bodyOne, bodyTwo],
+        generation: '1.0',
+      };
+    },
+
+    handleHeatMapModalToggle: function () {
+
+      if(!this.state.widgetInitialized) {
+          this._initializeWidget();
+      }
+      this.setState({
+        showWidget: !this.state.showWidget,
+      });
+    },
+
+    _initializeWidget: function () {
+        var component = this;
+        var bodylabsWidget = document.getElementById('bodylabsWidget');
+
+        if (bodylabsWidget) {
+          var widgetOptions = component.props.widgetOptions;
+
+          widgetOptions.action = {
+                    label: 'Get HeatMap',
+                    callback: function (info) {
+                      var measurements = info.measurements,
+                          gender = info.gender,
+                          size = info.size,
+                          unitSystem=component.refs.radioUnitsUS.getDOMNode().checked ? 'unitedStates' : 'metric';
+
+                      var bodyOne = component.constructPayload();
+
+                      var bodyTwo = {
+                        gender: gender,
+                        size: size,
+                        unitSystem: unitSystem,
+                        measurements: measurements[unitSystem],
+                        scheme: 'standard',
+                      };
+
+                      var heatMapPayload = component.constructHeatMapPayload(bodyOne, bodyTwo);
+
+                      component.props.handleHeatMapsRequest(heatMapPayload);
+                    },
+          };
+          window.BodyKit.bootstrapWidget(bodylabsWidget, widgetOptions);
+          
+          this.setState({widgetInitialized: true});
+        }
+        
+    },
+
+    _addMeasurements: function (measurementsId, measurementsValue, oldMeasurements) {
+      var newMeasurements = oldMeasurements;
+      
+      if (measurementsId) {
+        if(!measurementsValue){
+            delete newMeasurements[measurementsId];
+        } else {
+            newMeasurements[measurementsId] = parseFloat(measurementsValue);
+        }
+      }
+
+      return newMeasurements;
+    },
+
     handleUserInput: function (measurementsId, measurementsValue) {
       var inputMeasurements = this.state.inputMeasurements;
 
       //add new value to input_measurements state
-      if (measurementsId) {
-
-        if(!measurementsValue){
-          delete inputMeasurements[measurementsId];
-        } else {
-            inputMeasurements[measurementsId] = parseFloat(measurementsValue);
-        }
-        this.setState({inputMeasurements: inputMeasurements});
-      }
+      this.setState({inputMeasurements: this._addMeasurements(measurementsId, measurementsValue, inputMeasurements)});
     },
+
+    handleHeatmapUserInput: function (measurementsId, measurementsValue) {
+      var inputMeasurements = this.state.heatMapInputMeasurements;
+      this.setState({heatMapInputMeasurements: this._addMeasurements(measurementsId, measurementsValue, inputMeasurements)});
+    },
+
     handleGetMeshClick: function (event) {
       this.props.onMeshRequest(this.constructPayload());
     },
     handleGetMeasurementsClick: function (event) {
       this.props.onMeasurementsRequest(this.constructPayload());
     },
+    handleDownloadHeatmapClick: function (event) {
+      this.props.handleHeatMapsRequest(this.constructHeatMapPayload());
+    },
+
+    renderWidget: function () {
+
+      var component = this;
+
+      var widgetContainerClasses = React.addons.classSet({
+            'widget-container': true,
+            'hidden': !component.state.showWidget,
+      });
+
+      return (
+        <div className={widgetContainerClasses}>
+          <h3> HeatMap Comparison </h3>
+          <div id="bodylabsWidget"/>
+        </div>
+      );
+    },
+
     render: function () {
+
+      var component = this;
+
+      var widget = component.renderWidget();
+
+      var heatMapButtonValue = this.state.showWidget ? "Close Widget <<": "Get HeatMap >>";
+
       return (
         <div className='measurements-input'>
             <h3>Enter Your Measurements</h3>
@@ -137,9 +258,9 @@ var MeasurementInputForm = React.createClass({
                               <div key={item.id + '-div'}>
                                   <MeasurementInput measurement={item} 
                                                key={item.id}
-                                               onUserInput={this.handleUserInput}/>
+                                               onUserInput={component.handleUserInput}/>
                               </div>);
-                    }, this)
+                    })
                 }
 
             <p>
@@ -148,12 +269,20 @@ var MeasurementInputForm = React.createClass({
                 placeholder="size"
                 ref="baseBodySize"/>
             </p>
-            <p>
-              <input type="button" value="Get Measurements" onClick={this.handleGetMeasurementsClick} />
-            </p>
-            <p>
-              <input type="button" value="Download Mesh" onClick={this.handleGetMeshClick} />
-            </p>
+
+            <div className='action_buttons_container'>
+              <p>
+                <input type="button" value="Get Measurements" onClick={this.handleGetMeasurementsClick} />
+              </p>
+              <p>
+                <input type="button" value="Download Mesh" onClick={this.handleGetMeshClick} />
+              </p>
+              <p>
+                <input type="button" value={heatMapButtonValue} onClick={this.handleHeatMapModalToggle} />
+              </p>
+            </div>
+
+            { widget }
         </div>
       );
     }

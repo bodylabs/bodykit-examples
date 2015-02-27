@@ -22,7 +22,7 @@ var MeasurementsApp = React.createClass({
   getMesh: function (payload) {
         $.ajax({
             type: 'POST',
-            url: this.state.baseUrl + '/lite/mesh',
+            url: this.state.baseUrl + '/instant/mesh',
             data: JSON.stringify(payload),
             dataType: 'json',
             headers: this.state.aclAuthHeader,
@@ -36,7 +36,7 @@ var MeasurementsApp = React.createClass({
   getPredictedMeasurements: function (payload) {
         $.ajax({
             type: 'POST',
-            url: this.state.baseUrl + '/lite/measurements',
+            url: this.state.baseUrl + '/instant/measurements',
             data: JSON.stringify(payload),
             dataType: 'json',
             headers: this.state.aclAuthHeader,
