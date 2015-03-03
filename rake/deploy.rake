@@ -2,22 +2,29 @@ require_relative '../dev-tools/lib/deployment'
 
 $hipchat_from = 'bodykit'
 
-$pages_source_public = 'build'
-$pages_target_path = 'bodykit-examples'
+
+task :pre_deploy do
+  bucket = 'developer.bodylabs.com'
+  path = 'examples'
+
+  $s3_publish_source_public = 'build'
+  $s3_publish_target_public = "s3://#{bucket}/#{path}/"
+
+  ENV['BASE_URL'] = $base_url = "https://#{bucket}.s3.amazonaws.com/#{path}/"
+end
 
 namespace :deploy do
 
-  task :pre_deploy => [
-    'git:require_synced_to_master',
-  ]
-
   # right now only one example and please manually create symlink...
-  task :pages => :pre_deploy do
+  task :pages => [
+  'git:require_synced_to_master',
+  'pre_deploy',
+] do
     BodyLabsDevTools::Deployment.build_and_deploy(
       build_task: Rake::Task['build'],
-      deploy_task: Rake::Task['pages:publish'],
+      deploy_task: Rake::Task['s3_publish:publish'],
       description: 'bodykit-examples',
-      clickable_url: 'https://bodylabs-pages.s3.amazonaws.com/bodykit-examples/measurements/index.html',
+      clickable_url: '#{$base_url}/measurements/index.html',
     )
   end
 
