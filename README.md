@@ -27,7 +27,7 @@ You should now have a `build/` directory with the built examples. Open index.htm
 Online Demo
 ----------
 
-We also host the measurement app demo online and you can try it out [here](https://bodylabs-pages.s3.amazonaws.com/bodykit-examples/measurements/index.html)
+We also host the measurement app demo online and you can try it out [here](http://developer.bodylabs.com/examples/measurements/)
 
 Contribute
 ----------
