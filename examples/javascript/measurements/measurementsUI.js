@@ -114,7 +114,6 @@ var MeasurementInputForm = React.createClass({
             unitSystem: this.refs.radioUnitsUS.getDOMNode().checked ? 'unitedStates' : 'metric',
             scheme: 'flexible',
             measurements: this.state.inputMeasurements,
-            generation: '1'
       };
 
       if (size) {
@@ -127,7 +126,6 @@ var MeasurementInputForm = React.createClass({
 
       return { 
         bodies: [bodyOne, bodyTwo],
-        generation: '1.0',
       };
     },
 
