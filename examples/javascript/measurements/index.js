@@ -73,22 +73,6 @@ var AuthSetupForm = React.createClass({
 });
 
 var MeasurementsApp = React.createClass({
-
-    getInitialState: function () {
-        return {
-          predictedMeasurements: {},
-          heatmapMeasurements: {},
-          auth: {},
-          authResult: 'unknown',
-          errors: {},
-          aclAuthHeader: {},
-        };
-    },
-
-    componentDidMount: function() {
-        this.getAclAuthHeader();
-    },
-
     errorHandler: function (xhr) {
         if (xhr.status === 401){
           this.setState({authResult: xhr.statusText});
@@ -96,43 +80,6 @@ var MeasurementsApp = React.createClass({
           this.setState({errors: {status: xhr.status, text: xhr.responseText}});
         }
     },
-
-    // Grant access control for user to try out demo page
-    getAclAuthHeader: function () {
-        var component = this;
-
-        var authUrl = this.props.aclAuthServerUrl;
-
-        $.ajax({
-            type: 'POST',
-            url: authUrl,         
-            error: component.errorHandler,
-            success: function (data) {
-                component.setState({authResult: 'Success'});
-                component.setState({
-                    aclAuthHeader: {Authorization: data}
-                });       
-            }
-        });
-    },
-
-    _getMeasurements: function (payload, successCallback) {
-
-        var component = this;
-        $.ajax({
-            type: 'POST',
-            url: component.props.baseUrl + '/instant/measurements',
-            data: JSON.stringify(payload),
-            dataType: 'json',
-            // headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
-            headers: component.state.aclAuthHeader,
-            error: component.errorHandler,
-            success: successCallback
-        });
-    },
-
-    /// functions for get the outputs
-
     getMesh: function (payload) {
         var component = this;
         $.ajax({
@@ -140,8 +87,7 @@ var MeasurementsApp = React.createClass({
             url: component.props.baseUrl + '/instant/mesh',
             data: JSON.stringify(payload),
             dataType: 'json',
-            // headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
-            headers: component.state.aclAuthHeader,
+            headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
             error: component.errorHandler,
             success: function (data) {
                 component.setState({authResult: 'Success'});
@@ -152,11 +98,25 @@ var MeasurementsApp = React.createClass({
     },
 
     getPredictedMeasurements: function(payload) {
+      var component = this;
+      this._getMeasurements(payload, function (data) {
+          component.setState({predictedMeasurements: data.output.measurements});
+          component.setState({authResult: 'Success'});
+          component.setState({errors: {}});
+      });
+    },
+
+    _getMeasurements: function (payload, successCallback) {
+
         var component = this;
-        this._getMeasurements(payload, function (data) {
-            component.setState({predictedMeasurements: data.output.measurements});
-            component.setState({authResult: 'Success'});
-            component.setState({errors: {}});
+        $.ajax({
+            type: 'POST',
+            url: component.props.baseUrl + '/instant/measurements',
+            data: JSON.stringify(payload),
+            dataType: 'json',
+            headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
+            error: component.errorHandler,
+            success: successCallback
         });
     },
 
@@ -168,8 +128,7 @@ var MeasurementsApp = React.createClass({
             url: component.props.baseUrl + '/instant/heatmap',
             data: JSON.stringify(payload),
             dataType: 'json',
-            // headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
-            headers: component.state.aclAuthHeader,
+            headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
             error: component.errorHandler,
             success: function (data) {
                 component.setState({authResult: 'Success'});
@@ -203,17 +162,24 @@ var MeasurementsApp = React.createClass({
         pom.setAttribute('download', filename);
         pom.click();
     },
-
+    getInitialState: function () {
+        return {
+          predictedMeasurements: {},
+          heatmapMeasurements: {},
+          auth: {},
+          authResult: 'unknown',
+          errors: {},
+        };
+    },
     render: function () {
 
         var widgetOptions = this.props.widgetOptions;
-        widgetOptions.accessKey = this.state.auth.accessKey || 'some-fake-key';
-
-        //Use below if you want secret key auth.
-        // var secretKeyAuthSetupForm = (<AuthSetupForm onAuthFormSubmit={this.setUpAuth} authResult={this.state.authResult}/>);
+        widgetOptions.accessKey = this.state.auth.accessKey;
 
         return (
             <div className='measurementsDemo'>
+
+              <AuthSetupForm onAuthFormSubmit={this.setUpAuth} authResult={this.state.authResult}/>
 
               <section className='measurements-left'>
                   <MeasurementInputForm  widgetOptions={widgetOptions}
@@ -261,12 +227,10 @@ setInterval(function () {
   };
 
   var baseUrl = "https://api.bodylabs.com";
-  var aclAuthServerUrl = "https://bodylabs-web-glue.herokuapp.com/api_auth/demo";
 
   React.render(
     <MeasurementsApp presetMeasurements={standardMeasurements} 
                      baseUrl={baseUrl}
-                     aclAuthServerUrl={aclAuthServerUrl}
                      widgetOptions={bodykitWidgetOptions}/>,
     document.getElementById('container')
   );
