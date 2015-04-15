@@ -24,7 +24,7 @@ namespace :deploy do
       build_task: Rake::Task['build'],
       deploy_task: Rake::Task['s3_publish:publish'],
       description: 'bodykit-examples',
-      clickable_url: $base_url + 'measurements/index.html',
+      clickable_url: 'http://developer.bodylabs.com/examples/measurements/',
     )
   end
 
