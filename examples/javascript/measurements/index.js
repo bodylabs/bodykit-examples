@@ -86,7 +86,6 @@ var MeasurementsApp = React.createClass({
             type: 'POST',
             url: component.props.baseUrl + '/instant/mesh',
             data: JSON.stringify(payload),
-            dataType: 'json',
             headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
             error: component.errorHandler,
             success: function (data) {
@@ -127,7 +126,6 @@ var MeasurementsApp = React.createClass({
             type: 'POST',
             url: component.props.baseUrl + '/instant/heatmap',
             data: JSON.stringify(payload),
-            dataType: 'json',
             headers: {"Authorization": "SecretPair accesskey="+ component.state.auth.accessKey +",secret=" + component.state.auth.secret},
             error: component.errorHandler,
             success: function (data) {
