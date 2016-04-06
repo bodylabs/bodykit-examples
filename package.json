@@ -1,20 +1,26 @@
 {
   "name": "bodykit-examples",
   "private": true,
+  "version": "0.0.0",
   "description": "Basic example of using BodyKit to get measurements and body mesh",
   "repository": "https://github.com/bodylabs/bodykit-examples",
+  "scripts": {
+    "build": "grunt build"
+  },
   "devDependencies": {
-    "react": "~0.12.2",
-    "react-tools": "~0.12.2",
-    "extend": "~1.3.0",
-    "grunt-browserify": "~3.2.1",
-    "grunt-react": "~0.10.0",
-    "underscore": "~1.7.0",
-    "grunt-jsxhint": "~0.4.0",
-    "grunt-contrib-symlink": "~>0.3",
+    "bcrypt": "~0.8.0",
     "express": "~4.10.3",
     "express-react-views": "~0.7.0",
+    "extend": "~1.3.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "~3.2.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-symlink": "~>0.3",
+    "grunt-jsxhint": "~0.4.0",
+    "grunt-react": "~0.10.0",
+    "react": "~0.12.2",
+    "react-tools": "~0.12.2",
     "serve-static": "~1.9.1",
-    "bcrypt": "~0.8.0"
+    "underscore": "~1.7.0"
   }
 }
