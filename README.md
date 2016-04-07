@@ -19,7 +19,7 @@ Once you have cloned the repository, run the following to install dependencies a
 
 ```sh
 npm install
-grunt build
+npm run build
 ```
 
 You should now have a `build/` directory with the built examples. Open index.html to try it out.
